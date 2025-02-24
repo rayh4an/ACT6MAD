@@ -35,8 +35,10 @@ class Counter with ChangeNotifier {
   int value = 0;
 
   void increment() {
-    value += 1;
-    notifyListeners();
+    if (value < 99) {
+      value += 1;
+      notifyListeners();
+    }
   }
 
   void decrement() {
@@ -46,12 +48,17 @@ class Counter with ChangeNotifier {
     }
   }
 
+  void updateValue(double newValue) {
+    value = newValue.toInt();
+    notifyListeners();
+  }
+
   Color get backgroundColor {
     if (value <= 12) return Colors.lightBlue;
     if (value <= 19) return Colors.lightGreen;
-    if (value <= 30) return Colors.yellow;
+    if (value <= 30) return Colors.yellow.shade200;
     if (value <= 50) return Colors.orange;
-    return Colors.grey;
+    return Colors.grey.shade300;
   }
 
   String get message {
@@ -60,6 +67,12 @@ class Counter with ChangeNotifier {
     if (value <= 30) return "You're a young adult!";
     if (value <= 50) return "You're an adult now!";
     return "Golden years!";
+  }
+
+  Color get sliderColor {
+    if (value <= 33) return Colors.green;
+    if (value <= 67) return Colors.yellow;
+    return Colors.red;
   }
 }
 
@@ -103,6 +116,16 @@ class MyHomePage extends StatelessWidget {
             Text(
               counter.message,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            Slider(
+              value: counter.value.toDouble(),
+              min: 0,
+              max: 99,
+              divisions: 99,
+              activeColor: counter.sliderColor,
+              label: counter.value.toString(),
+              onChanged: (value) => counter.updateValue(value),
             ),
             const SizedBox(height: 20),
             Row(
